@@ -1,5 +1,9 @@
 spring.datasource.url: jdbc:h2:file:./camunda-h2-database
 
 camunda.bpm.admin-user:
-  id: camundaCon2023
-  password: camundaCon2023BDD;)
+  id: camunda
+  password: camunda
+
+informCustomerUrl: https://url-of-backend-to-inform-your-customer.com
+createNewContractUrl: https://url-of-backend-to-create-a-new-contract.com
+forwardToManualProcessingUrl: https://url-of-backend-to-forward-to-manual-processing.com

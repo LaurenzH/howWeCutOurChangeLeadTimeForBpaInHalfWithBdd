@@ -1,0 +1,9 @@
+spring.datasource.url: jdbc:h2:file:./camunda-h2-database
+
+camunda.bpm.admin-user:
+  id: camunda
+  password: camunda
+
+informCustomerUrl: http://localhost:1000/informCustomer
+createNewContractUrl: http://localhost:1000/createNewContract
+forwardToManualProcessingUrl: http://localhost:1000/forwardToManualProcessing

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1cf2v8w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.6.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.18.0">
+  <bpmn:collaboration id="Collaboration_13xg1ji">
+    <bpmn:participant id="NewCarInsuranceParticipant" name="New Car Insurance" processRef="CarInsuranceFirstVersion" />
+  </bpmn:collaboration>
+  <bpmn:process id="CarInsuranceFirstVersion" isExecutable="true">
+    <bpmn:startEvent id="RequestForNewCarInsuranceReceivedStartEvent" name="Request for new car insurance received">
+      <bpmn:outgoing>Flow_178z9uv</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_15ue635" sourceRef="ForwardToManualProcessingTask" targetRef="RequestForwardedToManualProcessingEndEvent" />
+    <bpmn:sequenceFlow id="Flow_1kolf30" sourceRef="CreateNewContractTask" targetRef="Gateway_1p6mn5c" />
+    <bpmn:sequenceFlow id="Flow_0lih12g" name="yes" sourceRef="Gateway_1p6mn5c" targetRef="NewContractCreatedEndEvent">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel">successfulCreation</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1fif2nc" name="no" sourceRef="Gateway_1p6mn5c" targetRef="Gateway_0kcz8lg">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="feel">not(successfulCreation)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_03ly9dn" sourceRef="Gateway_0kcz8lg" targetRef="ForwardToManualProcessingTask" />
+    <bpmn:sequenceFlow id="Flow_178z9uv" sourceRef="RequestForNewCarInsuranceReceivedStartEvent" targetRef="CreateNewContractTask" />
+    <bpmn:endEvent id="NewContractCreatedEndEvent" name="new contract created">
+      <bpmn:incoming>Flow_0lih12g</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="CreateNewContractTask" name="create new insurance contract" camunda:delegateExpression="#{CreateNewContract}">
+      <bpmn:incoming>Flow_178z9uv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kolf30</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0kcz8lg">
+      <bpmn:incoming>Flow_1fif2nc</bpmn:incoming>
+      <bpmn:outgoing>Flow_03ly9dn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1p6mn5c" name="was the creation successful?">
+      <bpmn:incoming>Flow_1kolf30</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lih12g</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1fif2nc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="ForwardToManualProcessingTask" name="forward to manual processing" camunda:delegateExpression="#{ForwardToManualProcessing}">
+      <bpmn:incoming>Flow_03ly9dn</bpmn:incoming>
+      <bpmn:outgoing>Flow_15ue635</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="RequestForwardedToManualProcessingEndEvent" name="request forwarded to manual processing">
+      <bpmn:incoming>Flow_15ue635</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_13xg1ji">
+      <bpmndi:BPMNShape id="Participant_1ck92kh_di" bpmnElement="NewCarInsuranceParticipant" isHorizontal="true" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="160" y="80" width="910" height="380" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="RequestForNewCarInsuranceReceivedStartEvent">
+        <dc:Bounds x="279" y="289" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="332" width="81" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0831hsq_di" bpmnElement="NewContractCreatedEndEvent">
+        <dc:Bounds x="942" y="289" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="929" y="332" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1feq5eb_di" bpmnElement="CreateNewContractTask">
+        <dc:Bounds x="406" y="267" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0kcz8lg_di" bpmnElement="Gateway_0kcz8lg" isMarkerVisible="true">
+        <dc:Bounds x="602" y="145" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1p6mn5c_di" bpmnElement="Gateway_1p6mn5c" isMarkerVisible="true">
+        <dc:Bounds x="602" y="282" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="587" y="339" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18j4454_di" bpmnElement="ForwardToManualProcessingTask">
+        <dc:Bounds x="748" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_16461yu_di" bpmnElement="RequestForwardedToManualProcessingEndEvent">
+        <dc:Bounds x="942" y="152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="916" y="195" width="89" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_15ue635_di" bpmnElement="Flow_15ue635">
+        <di:waypoint x="848" y="170" />
+        <di:waypoint x="942" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kolf30_di" bpmnElement="Flow_1kolf30">
+        <di:waypoint x="506" y="307" />
+        <di:waypoint x="602" y="307" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lih12g_di" bpmnElement="Flow_0lih12g">
+        <di:waypoint x="652" y="307" />
+        <di:waypoint x="942" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="708" y="289" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fif2nc_di" bpmnElement="Flow_1fif2nc">
+        <di:waypoint x="627" y="282" />
+        <di:waypoint x="627" y="195" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="641" y="237" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03ly9dn_di" bpmnElement="Flow_03ly9dn">
+        <di:waypoint x="652" y="170" />
+        <di:waypoint x="748" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_178z9uv_di" bpmnElement="Flow_178z9uv">
+        <di:waypoint x="315" y="307" />
+        <di:waypoint x="406" y="307" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
